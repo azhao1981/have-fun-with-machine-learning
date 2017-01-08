@@ -5,30 +5,30 @@
 This is a **hands-on guide** to machine learning for programmers with *no background* in
 AI. Using a neural network doesn’t require a PhD, and you don’t need to be the person who
 makes the next breakthrough in AI in order to *use* what exists today.  What we have now
-is already breathtaking, and highly usable.  I believe that more of us need to play with
-this stuff like we would any other open source technology, instead of treating it like a
+is already breathtaking(令人激动的), and highly usable.  I believe that more of us need to play with
+this stuff like we would any other open source technology, instead of treating(处理) it like a
 research topic.
 
-In this guide our goal will be to write a program that uses machine learning to predict, with a
-high degree of certainty, whether the images in [data/untrained-samples](data/untrained-samples)
-are of **dolphins** or **seahorses** using only the images themselves, and without
+In this guide our goal will be to write a program that uses machine learning to predict(预言), with a
+high degree of certainty(必然), whether the images in [data/untrained-samples](data/untrained-samples)
+are of **dolphins(海豚)** or **seahorses(海马)** using only the images themselves, and without
 having seen them before.  Here are two example images we'll use:
 
 ![A dolphin](data/untrained-samples/dolphin1.jpg?raw=true "Dolphin")
 ![A seahorse](data/untrained-samples/seahorse1.jpg?raw=true "Seahorse")
 
-To do that we’re going to train and use a [Convolutional Neural Network (CNN)](https://en.wikipedia.org/wiki/Convolutional_neural_network).
-We’re going to approach this from the point of view of a practitioner vs.
-from first principles. There is so much excitement about AI right now,
+To do that we’re going to train and use a [Convolutional(脑回) Neural Network (CNN)](https://en.wikipedia.org/wiki/Convolutional_neural_network).
+We’re going to approach this from the point of view of a practitioner(执业医生) vs.
+from first principles(原则). There is so much excitement about AI right now,
 but much of what’s being written feels like being taught to do
-tricks on your bike by a physics professor at a chalkboard instead
+tricks(欺骗) on your bike by a physics(物理学) professor at a chalkboard(黑板) instead
 of your friends in the park.
 
 I’ve decided to write this on Github vs. as a blog post
-because I’m sure that some of what I’ve written below is misleading, naive, or
-just plain wrong.  I’m still learning myself, and I’ve found the lack of solid
-beginner documentation an obstacle.  If you see me making a mistake or missing
-important details, please send a pull request. 
+because I’m sure that some of what I’ve written below is misleading(引入歧途的), naive(天真的), or
+just plain(简单) wrong.  I’m still learning myself, and I’ve found the lack of solid
+beginner documentation an obstacle(障碍).  If you see me making a mistake or missing
+important details, please send a pull request.
 
 With all of that out the way, let me show you how to do some tricks on your bike!
 
@@ -36,27 +36,27 @@ With all of that out the way, let me show you how to do some tricks on your bike
 
 Here’s what we’re going to explore:
 
-* Setup and use existing, open source machine learning technologies, specifically [Caffe](http://caffe.berkeleyvision.org/) and [DIGITS](https://developer.nvidia.com/digits)
+* Setup and use existing, open source machine learning technologies, specifically(明确) [Caffe](http://caffe.berkeleyvision.org/) and [DIGITS](https://developer.nvidia.com/digits)
 * Create a dataset of images
-* Train a neural network from scratch
+* Train a neural network from scratch(从头做起)
 * Test our neural network on images it has never seen before
-* Improve our neural network’s accuracy by fine tuning existing neural networks (AlexNet and GoogLeNet)
+* Improve our neural network’s accuracy(精确度) by fine tuning(微调) existing neural networks (AlexNet and GoogLeNet)
 * Deploy and use our neural network
 
-This guide won’t teach you how neural networks are designed, cover much theory,
-or use a single mathematical expression.  I don’t pretend to understand most of
+This guide won’t teach you how neural networks are designed, cover(涉及) much theory,
+or use a single mathematical(数学的) expression.  I don’t pretend(假装) to understand most of
 what I’m going to show you.  Instead, we’re going to use existing things in
 interesting ways to solve a hard problem.
 
 > Q: "I know you said we won’t talk about the theory of neural networks, but I’m
-> feeling like I’d at least like an overview before we get going.  Where should I start?"
+> feeling like I’d at least like an overview(综述) before we get going.  Where should I start?"
 
-There are literally hundreds of introductions to this, from short posts to full
+There are literally(确实) hundreds of introductions to this, from short posts to full
 online courses.  Depending on how you like to learn, here are three options
 for a good starting point:
 
-* This fantastic [blog post](https://jalammar.github.io/visual-interactive-guide-basics-neural-networks/) by J Alammar,
-which introduces the concepts of neural networks using intuitive examples.
+* This fantastic(异想天开) [blog post](https://jalammar.github.io/visual-interactive-guide-basics-neural-networks/) by J Alammar,
+which introduces the concepts of neural networks using intuitive(直觉的) examples.
 * Similarly, [this video](https://www.youtube.com/watch?v=FmpDIaiMIeA) introduction by [Brandon Rohrer](https://www.youtube.com/channel/UCsBKTrp45lTfHa_p49I2AEQ) is a really good intro to
 Convolutional Neural Networks like we'll be using
 * If you’d rather have a bit more theory, I’d recommend [this online book](http://neuralnetworksanddeeplearning.com/chap1.html) by [Michael Nielsen](http://michaelnielsen.org/).
@@ -66,7 +66,7 @@ Convolutional Neural Networks like we'll be using
 ###Installing Caffe
 
 First, we’re going to be using the [Caffe deep learning framework](http://caffe.berkeleyvision.org/)
-from the Berkely Vision and Learning Center (BSD licensed).
+from the Berkely Vision and Learning Center(伯克利大学的视觉学习中心) (BSD licensed).
 
 > Q: “Wait a minute, why Caffe? Why not use something like TensorFlow,
 > which everyone is talking about these days…”  
@@ -75,46 +75,46 @@ There are a lot of great choices available, and you should look at all the
 options.  [TensorFlow](https://www.tensorflow.org/) is great, and you should
 play with it.  However, I’m using Caffe for a number of reasons:
 
-* It’s tailormade for computer vision problems
+* It’s tailormade(定制的) for computer vision problems
 * It has support for C++, Python, (with [node.js support](https://github.com/silklabs/node-caffe) coming)
 * It’s fast and stable
 
 But the **number one reason** I’m using Caffe is that you **don’t need to write any code** to work
-with it.  You can do everything declaratively (Caffe uses structured text files to define the
+with it.  You can do everything declaratively(声明地) (Caffe uses structured(结构化) text files to define the
 network architecture) and using command-line tools.  Also, you can use some nice front-ends for Caffe to make
 training and validating your network a lot easier.  We’ll be using
 [nVidia’s DIGITS](https://developer.nvidia.com/digits) tool below for just this purpose.
 
 Caffe can be a bit of work to get installed.  There are [installation instructions](http://caffe.berkeleyvision.org/installation.html)
-for various platforms, including some prebuilt Docker or AWS configurations.
+for various platforms, including some prebuilt(预建的) Docker or AWS configurations.
 
-**NOTE:** when making my walkthrough, I used the following non-released version of Caffe from their Github repo:
+**NOTE:** when making my walkthrough(预先工作), I used the following non-released version of Caffe from their Github repo:
 https://github.com/BVLC/caffe/commit/5a201dd960840c319cefd9fa9e2a40d2c76ddd73
 
-On a Mac it can be frustrating to get working, with version issues halting
+On a Mac it can be frustrating(令人沮丧的) to get working, with version issues halting(停止)
 your progress at various steps in the build.  It took me a couple of days
-of trial and error.  There are a dozen guides I followed, each with slightly
-different problems.  In the end I found [this one](https://gist.github.com/doctorpangloss/f8463bddce2a91b949639522ea1dcbe4) to be the closest.
+of trial(试) and error.  There are a dozen guides I followed, each with slightly(轻微地)
+different problems.  In the end I found [this one](https://gist.github.com/doctorpangloss/f8463bddce2a91b949639522ea1dcbe4) to be the closest(最靠近).
 I’d also recommend [this post](https://eddiesmo.wordpress.com/2016/12/20/how-to-set-up-caffe-environment-and-pycaffe-on-os-x-10-12-sierra/),
 which is quite recent and links to many of the same discussions I saw.
 
-Getting Caffe installed is by far the hardest thing we'll do, which is pretty
-neat, since you’d assume the AI aspects would be harder!  Don’t give up if you have
-issues, it’s worth the pain.  If I was doing this again, I’d probably use an Ubuntu VM
+Getting Caffe installed is by far the hardest(困难的) thing we'll do, which is pretty
+neat(优雅), since you’d assume the AI aspects(领域) would be harder!  Don’t give up if you have
+issues, it’s worth the pain.  If I was doing this again, I’d probably(很可能) use an Ubuntu VM
 instead of trying to do it on Mac directly.  There's also a [Caffe Users](https://groups.google.com/forum/#!forum/caffe-users) group, if you need answers.
 
-> Q: “Do I need powerful hardware to train a neural network? What if I don’t have
+> Q: “Do I need powerful hardware(牛逼的硬件) to train a neural network? What if I don’t have
 > access to fancy GPUs?”
 
 It’s true, deep neural networks require a lot of computing power and energy to
-train...if you’re training them from scratch and using massive datasets.
-We aren’t going to do that.  The secret is to use a pretrained network that someone
+train...if you’re training them from scratch and using massive(大量的) datasets.
+We aren’t going to do that.  The secret is to use a pretrained(预告训练) network that someone
 else has already invested hundreds of hours of compute time training, and then to fine
-tune it to your particular dataset.  We’ll look at how to do this below, but suffice
+tune it to your particular dataset.  We’ll look at how to do this below, but suffice(使满足)
 it to say that everything I’m going to show you, I’m doing on a year old MacBook
 Pro without a fancy GPU.
 
-As an aside, because I have an integrated Intel graphics card vs. an nVidia GPU,
+As an aside(旁白), because I have an integrated Intel graphics card vs. an nVidia GPU,
 I decided to use the [OpenCL Caffe branch](https://github.com/BVLC/caffe/tree/opencl),
 and it’s worked great on my laptop.
 
@@ -127,7 +127,7 @@ the Python bindings, etc.  The parent dir that contains `build/` will be your
 * Running `make test && make runtest` should pass
 * After installing all the Python deps (doing `for req in $(cat requirements.txt); do pip install $req; done` in `python/`),
 running `make pycaffe && make pytest` should pass
-* You should also run `make distribute` in order to create a distributable version of caffe with all necessary headers, binaries, etc. in `distribute/`.
+* You should also run `make distribute` in order to create a distributable(分布式) version of caffe with all necessary headers, binaries, etc. in `distribute/`.
 
 On my machine, with Caffe fully built, I’ve got the following basic layout in my CAFFE_ROOT dir:
 
@@ -137,7 +137,7 @@ caffe/
         python/
         lib/
         tools/
-            caffe ← this is our main binary 
+            caffe ← this is our main binary
     distribute/
         python/
         lib/
@@ -147,7 +147,7 @@ caffe/
 ```
 
 At this point, we have everything we need to train, test, and program with neural
-networks.  In the next section we’ll add a user-friendly, web-based front end to
+networks.  In the next section(节) we’ll add a user-friendly, web-based front end to
 Caffe called DIGITS, which will make training and testing our networks much easier.
 
 ###Installing DIGITS
@@ -156,23 +156,23 @@ nVidia’s [Deep Learning GPU Training System, or DIGITS](https://github.com/NVI
 is BSD-licensed Python web app for training neural networks.  While it’s
 possible to do everything DIGITS does in Caffe at the command-line, or with code,
 using DIGITS makes it a lot easier to get started.  I also found it more fun, due
-to the great visualizations, real-time charts, and other graphical features.
+to the great visualizations(可视化), real-time charts(图表), and other graphical(绘画) features.
 Since you’re experimenting and trying to learn, I highly recommend beginning with DIGITS.
 
 There are quite a few good docs at https://github.com/NVIDIA/DIGITS/tree/master/docs,
 including a few [Installation](https://github.com/NVIDIA/DIGITS/blob/master/docs/BuildDigits.md),
 [Configuration](https://github.com/NVIDIA/DIGITS/blob/master/docs/Configuration.md),
 and [Getting Started](https://github.com/NVIDIA/DIGITS/blob/master/docs/GettingStarted.md)
-pages.  I’d recommend reading through everything there before you continue, as I’m not
+pages.  I’d recommend reading through everything(通读) there before you continue, as I’m not
 an expert on everything you can do with DIGITS.  There's also a public [DIGITS User Group](https://groups.google.com/forum/#!forum/digits-users) if you have questions you need to ask.
 
-There are various ways to install and run DIGITS, from Docker to pre-baked packages
+There are various ways to install and run DIGITS, from Docker to pre-baked(预焙) packages
 on Linux, or you can build it from source. I’m on a Mac, so I built it from source.
 
-**NOTE:** In my walkthrough I've used the following non-released version of DIGITS
+**NOTE:** In my walkthrough(预排工作) I've used the following non-released version of DIGITS
 from their Github repo: https://github.com/NVIDIA/DIGITS/commit/81be5131821ade454eb47352477015d7c09753d9
 
-Because it’s just a bunch of Python scripts, it was fairly painless to get working.
+Because it’s just a bunch of Python scripts, it was fairly(相当地) painless to get working.
 The one thing you need to do is tell DIGITS where your `CAFFE_ROOT` is by setting
 an environment variable before starting the server:
 
@@ -182,18 +182,18 @@ export CAFFE_ROOT=/path/to/caffe
 ```
 
 NOTE: on Mac I had issues with the server scripts assuming my Python binary was
-called `python2`, where I only have `python2.7`.  You can symlink it in `/usr/bin`
+called `python2`, where I only have `python2.7`.  You can symlink(符号链接) it in `/usr/bin`
 or modify the DIGITS startup script(s) to use the proper binary on your system.
 
-Once the server is started, you can do everything else via your web browser at http://localhost:5000, which is what I'll do below.
+Once the server is started, you can do everything else via(通过) your web browser at http://localhost:5000, which is what I'll do below.
 
 ##Training a Neural Network
 
-Training a neural network involves a few steps:
+Training a neural network involves(包含) a few steps:
 
-1. Assemble and prepare a dataset of categorized images
-2. Define the network’s architecture
-3. Train and Validate this network using the prepared dataset
+1. Assemble(收集) and prepare a dataset of categorized(分类的) images
+2. Define the network’s architecture(架构)
+3. Train and Validate(使生效) this network using the prepared dataset
 
 We’re going to do this 3 different ways, in order to show the difference
 between starting from scratch and using a pretrained network, and also to show
@@ -224,18 +224,18 @@ dolphins-and-seahorses/
         ...
 ```
 
-Here each directory is a category we want to classify, and each image within
-that category dir an example we’ll use for training and validation. 
+Here each directory is a category we want to classify(分类), and each image within
+that category dir an example we’ll use for training and validation.
 
 > Q: “Do my images have to be the same size?  What about the filenames, do they matter?”
 
-No to both. The images sizes will be normalized before we feed them into
-the network.  We’ll eventually want colour images of 256 x 256 pixels, but
-DIGITS will crop or squash (we'll squash) our images automatically in a moment.
-The filenames are irrelevant--it’s only important which category they are contained
+No to both. The images sizes will be normalized(标准化) before we feed(供给) them into
+the network.  We’ll eventually(最后) want colour images of 256 x 256 pixels, but
+DIGITS will crop(修剪) or squash(压扁) (we'll squash) our images automatically in a moment(立刻).
+The filenames are irrelevant(不相干)--it’s only important which category they are contained
 within.
 
-> Q: “Can I do more complex segmentation of my categories?”
+> Q: “Can I do more complex segmentation(分割) of my categories?”
 
 Yes. See https://github.com/NVIDIA/DIGITS/blob/digits-4.0/docs/ImageFolderFormat.md.
 
@@ -257,9 +257,9 @@ This will create our dataset, which took only 4s on my laptop.  In the end I
 have 92 Training images (49 dolphin, 43 seahorse) in 2 categories, with 30
 Validation images (16 dolphin, 14 seahorse).  It’s a really small dataset, but perfect
 for our experimentation and learning purposes, because it won’t take forever to train
-and validate a network that uses it. 
+and validate a network that uses it.
 
-You can **Explore the db** if you want to see the images after they have been squashed. 
+You can **Explore the db** if you want to see the images after they have been squashed.
 
 ![Explore the db](images/explore-dataset.png?raw=true "Explore the db")
 
@@ -274,7 +274,7 @@ and the default settings DIGITS provides.  For our first network, we’ll choose
 use one of the standard network architectures, [AlexNet (pdf)](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf). [AlexNet’s design](http://vision.stanford.edu/teaching/cs231b_spring1415/slides/alexnet_tugce_kyunghee.pdf)
 won a major computer vision competition called ImageNet in 2012.  The competition
 required categorizing 1000+ image categories across 1.2 million images.
- 
+
 ![New Classification Model 1](images/new-image-classification-model-attempt1.png?raw=true "Model 1")
 
 Caffe uses structured text files to define network architectures.  These text files
@@ -282,7 +282,7 @@ are based on [Google’s Protocol Buffers](https://developers.google.com/protoco
 You can read the [full schema](https://github.com/BVLC/caffe/blob/master/src/caffe/proto/caffe.proto) Caffe uses.
 For the most part we’re not going to work with these, but it’s good to be aware of their
 existence, since we’ll have to modify them in later steps.  The AlexNet prototxt file
-looks like this, for example: https://github.com/BVLC/caffe/blob/master/models/bvlc_alexnet/train_val.prototxt. 
+looks like this, for example: https://github.com/BVLC/caffe/blob/master/models/bvlc_alexnet/train_val.prototxt.
 
 We’ll train our network for **30 epochs**, which means that it will learn (with our
 training images) then test itself (using our validation images), and adjust the
@@ -328,7 +328,7 @@ of data to be used, we employ a technique called **Transfer Learning**, or **Fin
 Fine tuning takes advantage of the layout of deep neural networks, and uses
 pretrained networks to do the hard work of initial object detection.
 
-Imagine using a neural network to be like looking at something far away with a 
+Imagine using a neural network to be like looking at something far away with a
 pair of binoculars.  You first put the binoculars to your eyes, and everything is
 blurry.  As you adjust the focus, you start to see colours, lines, shapes, and eventually
 you are able to pick out the shape of a bird, then with some more adjustment you can
@@ -336,32 +336,32 @@ identify the species of bird.
 
 In a multi-layered network, the initial layers extract features (e.g., edges), with
 later layers using these features to detect shapes (e.g., a wheel, an eye), which are
-then feed into final classification layers that detect items based on accumulated 
-characteristics from previous layers (e.g., a cat vs. a dog).  A network has to be 
-able to go from pixels to circles to eyes to two eyes placed in a particular orientation, 
+then feed into final classification layers that detect items based on accumulated
+characteristics from previous layers (e.g., a cat vs. a dog).  A network has to be
+able to go from pixels to circles to eyes to two eyes placed in a particular orientation,
 and so on up to being able to finally conclude that an image depicts a cat.
 
-What we’d like to do is to specialize an existing, pretrained network for classifying 
+What we’d like to do is to specialize an existing, pretrained network for classifying
 a new set of image classes instead of the ones on which it was initially trained. Because
-the network already knows how to “see” features in images, we’d like to retrain 
-it to “see” our particular image types.  We don’t need to start from scratch with the 
-majority of the layers--we want to transfer the learning already done in these layers 
-to our new classification task.  Unlike our previous attempt, which used random weights, 
-we’ll use the existing weights of the final network in our training.  However, we’ll 
-throw away the final classification layer(s) and retrain the network with *our* image 
+the network already knows how to “see” features in images, we’d like to retrain
+it to “see” our particular image types.  We don’t need to start from scratch with the
+majority of the layers--we want to transfer the learning already done in these layers
+to our new classification task.  Unlike our previous attempt, which used random weights,
+we’ll use the existing weights of the final network in our training.  However, we’ll
+throw away the final classification layer(s) and retrain the network with *our* image
 dataset, fine tuning it to our image classes.
 
 For this to work, we need a pretrained network that is similar enough to our own data
-that the learned weights will be useful.  Luckily, the networks we’ll use below were 
-trained on millions of natural images from [ImageNet](http://image-net.org/), which 
+that the learned weights will be useful.  Luckily, the networks we’ll use below were
+trained on millions of natural images from [ImageNet](http://image-net.org/), which
 is useful across a broad range of classification tasks.
 
-This technique has been used to do interesting things like screening for eye diseases 
-from medical imagery, identifying plankton species from microscopic images collected at 
+This technique has been used to do interesting things like screening for eye diseases
+from medical imagery, identifying plankton species from microscopic images collected at
 sea, to categorizing the artistic style of Flickr images.
 
 Doing this perfectly, like all of machine learning, requires you to understand the
-data and network architecture--you have to be careful with overfitting of the data, 
+data and network architecture--you have to be careful with overfitting of the data,
 might need to fix some of the layers, might need to insert new layers, etc. However,
 my experience is that it “Just Works” much of the time, and it’s worth you simply doing
 an experiment to see what you can achieve using our naive approach.
@@ -381,7 +381,7 @@ In 2014, Google won the same ImageNet competition with [GoogLeNet](https://resea
 a 22-layer neural network. A snapshot of GoogLeNet is available for download
 as well, see https://github.com/BVLC/caffe/tree/master/models/bvlc_googlenet.
 Again, we’ll need the `.caffemodel` file with all the pretrained weights,
-which is available for download at http://dl.caffe.berkeleyvision.org/bvlc_googlenet.caffemodel. 
+which is available for download at http://dl.caffe.berkeleyvision.org/bvlc_googlenet.caffemodel.
 
 With these `.caffemodel` files in hand, we can upload them into DIGITs.  Go to
 the **Pretrained Models** tab in DIGITs home page and choose **Upload Pretrained Model**:
@@ -389,7 +389,7 @@ the **Pretrained Models** tab in DIGITs home page and choose **Upload Pretrained
 ![Load Pretrained Model](images/load-pretrained-model.png?raw=true "Load Pretrained Model")
 
 For both of these pretrained models, we can use the defaults DIGITs provides
-(i.e., colour, squashed images of 256 x 256).  We just need to provide the 
+(i.e., colour, squashed images of 256 x 256).  We just need to provide the
 `Weights (**.caffemodel)` and `Model Definition (original.prototxt)`.
 Click each of those buttons to select a file.
 
@@ -397,7 +397,7 @@ For the model definitions we can use https://github.com/BVLC/caffe/blob/master/m
 for GoogLeNet and https://github.com/BVLC/caffe/blob/master/models/bvlc_alexnet/train_val.prototxt
 for AlexNet.  We aren’t going to use the classification labels of these networks,
 so we’ll skip adding a `labels.txt` file:
- 
+
 ![Upload Pretrained Model](images/upload-pretrained-model.png?raw=true "Upload Pretrained Model")
 
 Repeat this process for both AlexNet and GoogLeNet, as we’ll use them both in the coming steps.
@@ -875,7 +875,7 @@ later by looking up the label for a probability using its position (e.g., 0=dolp
 ```python
 labels_file = os.path.join(model_dir, 'labels.txt')
 labels = np.loadtxt(labels_file, str, delimiter='\n')
-``` 
+```
 
 Now we're ready to classify an image.  We'll use [`caffe.io.load_image()`](https://github.com/BVLC/caffe/blob/61944afd4e948a4e2b4ef553919a886a8a8b8246/python/caffe/io.py#L279)
 to read our image file, then use our transformer to reshape it and set it as our network's data layer:
@@ -980,7 +980,7 @@ Let's look at how each of our three attempts did with this challenge:
 
 ### Model Attempt 1: AlexNet from Scratch (3rd Place)
 
-| Image | Dolphin | Seahorse | Result | 
+| Image | Dolphin | Seahorse | Result |
 |-------|---------|----------|--------|
 |[dolphin1.jpg](data/untrained-samples/dolphin1.jpg)| 71.11% | 28.89% | :expressionless: |
 |[dolphin2.jpg](data/untrained-samples/dolphin2.jpg)| 99.2% | 0.8% | :sunglasses: |
@@ -991,7 +991,7 @@ Let's look at how each of our three attempts did with this challenge:
 
 ### Model Attempt 2: Fine Tuned AlexNet (2nd Place)
 
-| Image | Dolphin | Seahorse | Result | 
+| Image | Dolphin | Seahorse | Result |
 |-------|---------|----------|--------|
 |[dolphin1.jpg](data/untrained-samples/dolphin1.jpg)| 99.1% | 0.09% |  :sunglasses: |
 |[dolphin2.jpg](data/untrained-samples/dolphin2.jpg)| 99.5% | 0.05% |  :sunglasses: |
@@ -1002,7 +1002,7 @@ Let's look at how each of our three attempts did with this challenge:
 
 ### Model Attempt 3: Fine Tuned GoogLeNet (1st Place)
 
-| Image | Dolphin | Seahorse | Result | 
+| Image | Dolphin | Seahorse | Result |
 |-------|---------|----------|--------|
 |[dolphin1.jpg](data/untrained-samples/dolphin1.jpg)| 99.86% | 0.14% |  :sunglasses: |
 |[dolphin2.jpg](data/untrained-samples/dolphin2.jpg)| 100% | 0% |  :sunglasses: |
