@@ -263,7 +263,7 @@ You can **Explore the db** if you want to see the images after they have been sq
 
 ![Explore the db](images/explore-dataset.png?raw=true "Explore the db")
 
-### Training: Attempt 1, from Scratch
+### Training: Attempt(尝试) 1, from Scratch
 
 Back in the DIGITS Home screen, we need to create a new **Classification Model**:
 
@@ -281,19 +281,19 @@ Caffe uses structured text files to define network architectures.  These text fi
 are based on [Google’s Protocol Buffers](https://developers.google.com/protocol-buffers/).
 You can read the [full schema](https://github.com/BVLC/caffe/blob/master/src/caffe/proto/caffe.proto) Caffe uses.
 For the most part we’re not going to work with these, but it’s good to be aware of their
-existence, since we’ll have to modify them in later steps.  The AlexNet prototxt file
+existence(存在), since we’ll have to modify them in later steps.  The AlexNet prototxt(原型txt) file
 looks like this, for example: https://github.com/BVLC/caffe/blob/master/models/bvlc_alexnet/train_val.prototxt.
 
-We’ll train our network for **30 epochs**, which means that it will learn (with our
+We’ll train our network for **30 epochs(时期)**, which means that it will learn (with our
 training images) then test itself (using our validation images), and adjust the
 network’s weights depending on how well it’s doing, and repeat this process 30 times.
-Each time it completes a cycle we’ll get info about **Accuracy** (0% to 100%,
+Each time it completes a cycle we’ll get info about **Accuracy( 精确度)** (0% to 100%,
 where higher is better) and what our **Loss** is (the sum of all the mistakes that were
-made, where lower is better).  Ideally we want a network that is able to predict with
+made, where lower is better).  Ideally(理想地) we want a network that is able to predict with
 high accuracy, and with few errors (small loss).
 
 Initially, our network’s accuracy is a bit below 50%.  This makes sense, because at first it’s
-just “guessing” between two categories using randomly assigned weights.  Over time
+just “guessing” between two categories using randomly assigned(分配) weights.  Over time
 it’s able to achieve 87.5% accuracy, with a loss of 0.37.  The entire 30 epoch run
 took me just under 6 minutes.
 
@@ -310,8 +310,8 @@ It almost seems perfect, until we try another:
 
 ![Model 1 Classify 3](images/model-attempt1-classify3.png?raw=true "Model 1 Classify 3")
 
-Here it falls down completely, and confuses a seahorse for a dolphin, and worse,
-does so with a high degree of confidence.
+Here it falls down completely, and confuses(搞错) a seahorse for a dolphin, and worse,
+does so with a high degree of confidence(信心).
 
 The reality is that our dataset is too small to be useful for training a really good
 neural network.  We really need 10s or 100s of thousands of images, and with that, a
@@ -321,40 +321,40 @@ lot of computing power to process everything.
 
 ####How Fine Tuning works
 
-Designing a neural network from scratch, collecting data sufficient to train
+Designing a neural network from scratch, collecting data sufficient(充分的) to train
 it (e.g., millions of images), and accessing GPUs for weeks to complete the
-training is beyond the reach of most of us.  To make it practical for smaller amounts
-of data to be used, we employ a technique called **Transfer Learning**, or **Fine Tuning**.
+training is beyond the reach(力所不及) of most of us.  To make it practical(实用) for smaller amounts
+of data to be used, we employ(使用) a technique called **Transfer Learning**, or **Fine Tuning**.
 Fine tuning takes advantage of the layout of deep neural networks, and uses
-pretrained networks to do the hard work of initial object detection.
+pretrained networks to do the hard work of initial object detection(探测).
 
 Imagine using a neural network to be like looking at something far away with a
-pair of binoculars.  You first put the binoculars to your eyes, and everything is
-blurry.  As you adjust the focus, you start to see colours, lines, shapes, and eventually
+pair of binoculars(双筒望远镜).  You first put the binoculars to your eyes, and everything is
+blurry(模糊的).  As you adjust the focus, you start to see colours, lines, shapes, and eventually
 you are able to pick out the shape of a bird, then with some more adjustment you can
-identify the species of bird.
+identify the species(种类) of bird.
 
-In a multi-layered network, the initial layers extract features (e.g., edges), with
+In a multi-layered network, the initial layers extract(摘要) features (e.g., edges), with
 later layers using these features to detect shapes (e.g., a wheel, an eye), which are
-then feed into final classification layers that detect items based on accumulated
+then feed into final classification layers that detect items based on accumulated(累积的)
 characteristics from previous layers (e.g., a cat vs. a dog).  A network has to be
-able to go from pixels to circles to eyes to two eyes placed in a particular orientation,
-and so on up to being able to finally conclude that an image depicts a cat.
+able to go from pixels to circles(圆圈) to eyes to two eyes placed(放置) in a particular orientation(具体方向),
+and so on(诸如此类) up to being able to finally conclude(推断) that an image depicts(描画) a cat.
 
-What we’d like to do is to specialize an existing, pretrained network for classifying
+What we’d like to do is to specialize(详细说明) an existing, pretrained network for classifying
 a new set of image classes instead of the ones on which it was initially trained. Because
 the network already knows how to “see” features in images, we’d like to retrain
 it to “see” our particular image types.  We don’t need to start from scratch with the
-majority of the layers--we want to transfer the learning already done in these layers
+majority(多数) of the layers--we want to transfer the learning already done in these layers
 to our new classification task.  Unlike our previous attempt, which used random weights,
 we’ll use the existing weights of the final network in our training.  However, we’ll
-throw away the final classification layer(s) and retrain the network with *our* image
+throw away(抛弃) the final classification layer(s) and retrain the network with *our* image
 dataset, fine tuning it to our image classes.
 
 For this to work, we need a pretrained network that is similar enough to our own data
 that the learned weights will be useful.  Luckily, the networks we’ll use below were
 trained on millions of natural images from [ImageNet](http://image-net.org/), which
-is useful across a broad range of classification tasks.
+is useful *across a broad(通过)* range of classification tasks.
 
 This technique has been used to do interesting things like screening for eye diseases
 from medical imagery, identifying plankton species from microscopic images collected at
