@@ -356,12 +356,12 @@ that the learned weights will be useful.  Luckily, the networks we’ll use belo
 trained on millions of natural images from [ImageNet](http://image-net.org/), which
 is useful *across a broad(通过)* range of classification tasks.
 
-This technique has been used to do interesting things like screening for eye diseases
-from medical imagery, identifying plankton species from microscopic images collected at
-sea, to categorizing the artistic style of Flickr images.
+This technique has been used to do interesting things like screening(筛选) for eye diseases
+from medical imagery(图像), identifying plankton(浮游生物) species from microscopic images collected at
+sea, to categorizing the artistic(艺术的) style of Flickr images.
 
 Doing this perfectly, like all of machine learning, requires you to understand the
-data and network architecture--you have to be careful with overfitting of the data,
+data and network architecture--you have to be careful with overfitting(过适) of the data,
 might need to fix some of the layers, might need to insert new layers, etc. However,
 my experience is that it “Just Works” much of the time, and it’s worth you simply doing
 an experiment to see what you can achieve using our naive approach.
@@ -372,7 +372,7 @@ In our first attempt, we used AlexNet’s architecture, but started with random
 weights in the network’s layers.  What we’d like to do is download and use a
 version of AlexNet that has already been trained on a massive dataset.
 
-Thankfully we can do exactly this.  A snapshot of AlexNet is available for download: https://github.com/BVLC/caffe/tree/master/models/bvlc_alexnet.
+Thankfully we can do exactly(正确地) this.  A snapshot(快照) of AlexNet is available for download: https://github.com/BVLC/caffe/tree/master/models/bvlc_alexnet.
 We need the binary `.caffemodel` file, which is what contains the trained weights, and it’s
 available for download at http://dl.caffe.berkeleyvision.org/bvlc_alexnet.caffemodel.
 
