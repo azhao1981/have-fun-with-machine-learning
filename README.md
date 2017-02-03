@@ -497,7 +497,7 @@ close together, and with their bodies mostly underwater, it does the right thing
 ### Training: Attempt 3, Fine Tuning GoogLeNet
 
 Like the previous AlexNet model we used for fine tuning, we can use GoogLeNet as well.
-Modifying the network is a bit trickier, since you have to redefine three fully
+Modifying the network is a bit trickier(需要技巧的), since you have to redefine three fully
 connected layers instead of just one.
 
 To fine tune GoogLeNet for our use case, we need to once again create a
@@ -733,7 +733,7 @@ the Caffe documentation about how to use the model we just built.  It says:
 
 > A network is defined by its design (.prototxt), and its weights (.caffemodel). As a network is
 > being trained, the current state of that network's weights are stored in a .caffemodel. With both
-> of these we can move from the train/test phase into the production phase.
+> of these we can move from the train/test phase(时期) into the production phase.
 >
 > In its current state, the design of the network is not designed for deployment. Before we can
 > release our network as a product, we often need to alter it in a few ways:
@@ -743,7 +743,7 @@ the Caffe documentation about how to use the model we just built.  It says:
 > 3. Set the network up to accept data.
 > 4. Have the network output the result.
 
-DIGITS has already done the work for us, separating out the different versions of our `prototxt` files.
+DIGITS has already done the work for us, separating(分隔) out the different versions of our `prototxt` files.
 The files we’ll care about when using this network are:
 
 * `deploy.prototxt` - the definition of our network, ready for accepting image input data
@@ -752,7 +752,7 @@ The files we’ll care about when using this network are:
 * `snapshot_iter_90.caffemodel` - these are the trained weights for our network
 
 We can use these files in a number of ways to classify new images.  For example, in our
-`CAFFE_ROOT` we can use `build/examples/cpp_classification/classification.bin` to classify one image:
+`CAFFE_ROOT` we can use `build/examples/cpp_classification/classification.bin` to classify(分类) one image:
 
 ```bash
 $ cd $CAFFE_ROOT/build/examples/cpp_classification
